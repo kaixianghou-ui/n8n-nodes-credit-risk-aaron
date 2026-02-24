@@ -49,106 +49,49 @@ export class CreditRisk implements INodeType {
 				name: 'income',
 				type: 'number',
 				default: 0,
-				description: 'Customer annual income',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
+				displayOptions: { show: { operation: ['score'] } },
 			},
 			{
 				displayName: 'Total Debt (CNY)',
 				name: 'debt',
 				type: 'number',
 				default: 0,
-				description: 'Total existing debt including loans and credit cards',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
+				displayOptions: { show: { operation: ['score'] } },
 			},
 			{
 				displayName: 'Overdue Count (24 Months)',
 				name: 'overdue',
 				type: 'number',
 				default: 0,
-				description: 'Number of overdue payments in last 24 months',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
+				displayOptions: { show: { operation: ['score'] } },
 			},
 			{
 				displayName: 'Credit History (Months)',
 				name: 'history',
 				type: 'number',
 				default: 0,
-				description: 'Length of credit history in months',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
+				displayOptions: { show: { operation: ['score'] } },
 			},
 			{
 				displayName: 'Risk Strategy',
 				name: 'strategy',
 				type: 'options',
 				options: [
-					{
-						name: 'Conservative (Board Level)',
-						value: 'conservative',
-						description: 'High threshold, suitable for board audit',
-					},
-					{
-						name: 'Standard',
-						value: 'standard',
-						description: 'Balanced risk-return',
-					},
-					{
-						name: 'Aggressive',
-						value: 'aggressive',
-						description: 'Lower threshold for growth',
-					},
+					{ name: 'Conservative', value: 'conservative' },
+					{ name: 'Standard', value: 'standard' },
+					{ name: 'Aggressive', value: 'aggressive' },
 				],
 				default: 'standard',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
-			},
-			{
-				displayName: 'OpenAI API Key',
-				name: 'openaiApiKey',
-				type: 'string',
-				typeOptions: {
-					password: true,
-				},
-				default: '',
-				description: 'For AI explanation generation (optional)',
-				displayOptions: {
-					show: {
-						operation: ['explain'],
-					},
-				},
+				displayOptions: { show: { operation: ['score'] } },
 			},
 			{
 				displayName: 'Risk Score to Explain',
 				name: 'scoreToExplain',
 				type: 'number',
 				default: 50,
-				description: 'The risk score value to generate explanation for',
-				displayOptions: {
-					show: {
-						operation: ['explain'],
-					},
-				},
+				displayOptions: { show: { operation: ['explain'] } },
 			},
 		],
-		usableAsTool: true,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -173,7 +116,6 @@ export class CreditRisk implements INodeType {
 					else if (dti > 10) score -= 5;
 					
 					score -= overdue * 12;
-					
 					if (history > 60) score += 10;
 					else if (history > 24) score += 5;
 					
@@ -191,11 +133,6 @@ export class CreditRisk implements INodeType {
 					if (score >= 80) riskLevel = 'Low';
 					else if (score < 50) riskLevel = 'High';
 
-					const riskFactors = [];
-					if (dti > 50) riskFactors.push('Critical: DTI > 50%');
-					if (overdue > 2) riskFactors.push('High: Multiple overdues');
-					if (overdue === 0 && dti < 30) riskFactors.push('Low: Clean record');
-
 					returnData.push({
 						json: {
 							customerId: `CUST_${Date.now()}_${i}`,
@@ -206,49 +143,22 @@ export class CreditRisk implements INodeType {
 							debtToIncome: dti.toFixed(2) + '%',
 							strategy,
 							threshold,
-							riskFactors,
-							modelVersion: 'v1.0.0-board',
 							evaluatedAt: new Date().toISOString(),
 						},
 					});
-				} 
-				else if (operation === 'explain') {
+				} else if (operation === 'explain') {
 					const score = this.getNodeParameter('scoreToExplain', i) as number;
-					
-					let explanation = '';
-					if (score >= 80) {
-						explanation = '信用状况优秀，建议给予最优利率并快速审批';
-					} else if (score >= 60) {
-						explanation = '信用状况良好，建议标准利率常规审核';
-					} else if (score >= 40) {
-						explanation = '信用状况存疑，建议提高利率或要求担保';
-					} else {
-						explanation = '高风险客户，建议拒绝或人工尽调';
-					}
-
-					returnData.push({
-						json: {
-							score,
-							explanation,
-							generatedBy: 'Credit Risk AI v1.0',
-							timestamp: new Date().toISOString(),
-						},
-					});
+					let explanation = score >= 80 ? '信用优秀' : score >= 60 ? '信用良好' : score >= 40 ? '信用存疑' : '高风险';
+					returnData.push({ json: { score, explanation } });
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({
-						json: {
-							error: error.message,
-							status: 'FAILED',
-						},
-					});
+					returnData.push({ json: { error: error.message, status: 'FAILED' } });
 					continue;
 				}
 				throw error;
 			}
 		}
-
 		return [returnData];
 	}
 }
