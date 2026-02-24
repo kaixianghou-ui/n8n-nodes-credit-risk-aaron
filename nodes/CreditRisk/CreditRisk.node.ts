@@ -1,6 +1,7 @@
 import { INodeType, INodeTypeDescription, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 
 export class CreditRisk implements INodeType {
+		usableAsTool = true;
 	usableAsTool = true;
 		usableAsTool = true;
 	usableAsTool = true;	description: INodeTypeDescription = {
