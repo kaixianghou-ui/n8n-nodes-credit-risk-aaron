@@ -134,6 +134,7 @@ export class CreditRisk implements INodeType {
 				},
 			},
 		],
+		usableAsTool: true,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
