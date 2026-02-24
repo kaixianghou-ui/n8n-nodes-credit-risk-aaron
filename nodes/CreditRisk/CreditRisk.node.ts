@@ -10,8 +10,9 @@ export class CreditRisk implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'AI-powered credit risk scoring with explainability',
 		defaults: {
-			name: 'Credit Risk AI',
-		},
+	name: 'Credit Risk AI',
+	usableAsTool: true,  // 添加这一行
+},
 		inputs: ['main'],
 		outputs: ['main'],
 		credentials: [
