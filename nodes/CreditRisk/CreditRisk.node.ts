@@ -2,10 +2,8 @@ import { INodeType, INodeTypeDescription, IExecuteFunctions, INodeExecutionData 
 
 export class CreditRisk implements INodeType {
 		usableAsTool = true;
-	usableAsTool = true;
-		usableAsTool = true;
-	usableAsTool = true;	description: INodeTypeDescription = {
-		displayName: 'Credit Risk AI',
+
+		description: INodeTypeDescription = {
 		name: 'creditRisk',
 		icon: 'file:creditRisk.svg',
 		group: ['transform'],
