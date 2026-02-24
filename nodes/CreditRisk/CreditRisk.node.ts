@@ -92,6 +92,7 @@ export class CreditRisk implements INodeType {
 				displayOptions: { show: { operation: ['explain'] } },
 			},
 		],
+		usableAsTool: true,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -148,7 +149,7 @@ export class CreditRisk implements INodeType {
 					});
 				} else if (operation === 'explain') {
 					const score = this.getNodeParameter('scoreToExplain', i) as number;
-					let explanation = score >= 80 ? '信用优秀' : score >= 60 ? '信用良好' : score >= 40 ? '信用存疑' : '高风险';
+					const explanation = score >= 80 ? '信用优秀' : score >= 60 ? '信用良好' : score >= 40 ? '信用存疑' : '高风险';
 					returnData.push({ json: { score, explanation } });
 				}
 			} catch (error) {
