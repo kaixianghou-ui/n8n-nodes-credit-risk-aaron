@@ -2,7 +2,6 @@ import { INodeType, INodeTypeDescription, IExecuteFunctions, INodeExecutionData 
 
 export class CreditRisk implements INodeType {
 	usableAsTool = true;
-	
 	description: INodeTypeDescription = {
 		displayName: 'Credit Risk AI',
 		name: 'creditRisk',
@@ -10,7 +9,7 @@ export class CreditRisk implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'AI-powered credit risk scoring with explainability',
+		description: 'AI-powered credit risk scoring',
 		defaults: {
 			name: 'Credit Risk AI',
 		},
@@ -38,7 +37,7 @@ export class CreditRisk implements INodeType {
 					{
 						name: 'AI Explanation',
 						value: 'explain',
-						description: 'Generate AI explanation for the score',
+						description: 'Generate AI explanation',
 						action: 'Generate AI explanation',
 					},
 				],
@@ -49,50 +48,82 @@ export class CreditRisk implements INodeType {
 				name: 'income',
 				type: 'number',
 				default: 0,
-				displayOptions: { show: { operation: ['score'] } },
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
 			},
 			{
 				displayName: 'Total Debt (CNY)',
 				name: 'debt',
 				type: 'number',
 				default: 0,
-				displayOptions: { show: { operation: ['score'] } },
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
 			},
 			{
-				displayName: 'Overdue Count (24 Months)',
+				displayName: 'Overdue Count',
 				name: 'overdue',
 				type: 'number',
 				default: 0,
-				displayOptions: { show: { operation: ['score'] } },
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
 			},
 			{
 				displayName: 'Credit History (Months)',
 				name: 'history',
 				type: 'number',
 				default: 0,
-				displayOptions: { show: { operation: ['score'] } },
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
 			},
 			{
 				displayName: 'Risk Strategy',
 				name: 'strategy',
 				type: 'options',
 				options: [
-					{ name: 'Conservative', value: 'conservative' },
-					{ name: 'Standard', value: 'standard' },
-					{ name: 'Aggressive', value: 'aggressive' },
+					{
+						name: 'Conservative',
+						value: 'conservative',
+					},
+					{
+						name: 'Standard',
+						value: 'standard',
+					},
+					{
+						name: 'Aggressive',
+						value: 'aggressive',
+					},
 				],
 				default: 'standard',
-				displayOptions: { show: { operation: ['score'] } },
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
 			},
 			{
 				displayName: 'Risk Score to Explain',
 				name: 'scoreToExplain',
 				type: 'number',
 				default: 50,
-				displayOptions: { show: { operation: ['explain'] } },
+				displayOptions: {
+					show: {
+						operation: ['explain'],
+					},
+				},
 			},
 		],
-		usableAsTool: true,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -136,30 +167,26 @@ export class CreditRisk implements INodeType {
 
 					returnData.push({
 						json: {
-							customerId: `CUST_${Date.now()}_${i}`,
 							creditScore: Math.round(score),
 							riskLevel,
 							decision,
-							defaultProbability: ((100 - score) / 100).toFixed(2),
 							debtToIncome: dti.toFixed(2) + '%',
-							strategy,
-							threshold,
-							evaluatedAt: new Date().toISOString(),
 						},
 					});
 				} else if (operation === 'explain') {
 					const score = this.getNodeParameter('scoreToExplain', i) as number;
-					const explanation = score >= 80 ? '信用优秀' : score >= 60 ? '信用良好' : score >= 40 ? '信用存疑' : '高风险';
+					const explanation = score >= 80 ? '信用优秀' : score >= 60 ? '信用良好' : '高风险';
 					returnData.push({ json: { score, explanation } });
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({ json: { error: error.message, status: 'FAILED' } });
+					returnData.push({ json: { error: error.message } });
 					continue;
 				}
 				throw error;
 			}
 		}
+
 		return [returnData];
 	}
 }
