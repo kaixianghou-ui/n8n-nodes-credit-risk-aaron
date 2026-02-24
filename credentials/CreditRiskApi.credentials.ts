@@ -4,7 +4,6 @@ export class CreditRiskApi implements ICredentialType {
 	name = 'creditRiskApi';
 	displayName = 'Credit Risk API';
 	documentationUrl = 'https://github.com/kaixianghou-ui/n8n-nodes-credit-risk-aaron';
-	icon = 'file:nodes/CreditRisk/creditRisk.svg';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Endpoint',
