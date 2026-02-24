@@ -1,7 +1,7 @@
 import { INodeType, INodeTypeDescription, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 
 export class CreditRisk implements INodeType {
-	description: INodeTypeDescription = {
+	usableAsTool = true;	description: INodeTypeDescription = {
 		displayName: 'Credit Risk AI',
 		name: 'creditRisk',
 		icon: 'file:creditRisk.svg',
