@@ -20,14 +20,7 @@ export class CreditRisk implements INodeType {
 				required: false,
 			},
 		],
-
-	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const items = this.getInputData();
-		const returnData: INodeExecutionData[] = [];
-		const operation = this.getNodeParameter('operation', 0) as string;
-
-		for (let i = 0; i < items.length; i++) {
-			try {
+		properties: [
 				if (operation === 'score') {
 					const income = this.getNodeParameter('income', i) as number;
 					const debt = this.getNodeParameter('debt', i) as number;
