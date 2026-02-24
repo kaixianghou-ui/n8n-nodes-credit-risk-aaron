@@ -4,6 +4,8 @@ export class CreditRisk implements INodeType {
 	usableAsTool = true;
 	
 	description: INodeTypeDescription = {
+		displayName: 'Credit Risk AI',
+		name: 'creditRisk',
 		icon: 'file:creditRisk.svg',
 		group: ['transform'],
 		version: 1,
@@ -146,7 +148,6 @@ export class CreditRisk implements INodeType {
 				},
 			},
 		],
-		usableAsTool: true,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
