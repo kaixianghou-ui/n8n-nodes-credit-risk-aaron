@@ -21,6 +21,140 @@ export class CreditRisk implements INodeType {
 			},
 		],
 		properties: [
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Risk Score',
+						value: 'score',
+						description: 'Calculate credit risk score',
+						action: 'Calculate credit risk score',
+					},
+					{
+						name: 'AI Explanation',
+						value: 'explain',
+						description: 'Generate AI explanation for the score',
+						action: 'Generate AI explanation',
+					},
+				],
+				default: 'score',
+			},
+			{
+				displayName: 'Annual Income (CNY)',
+				name: 'income',
+				type: 'number',
+				default: 0,
+				description: 'Customer annual income',
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
+			},
+			{
+				displayName: 'Total Debt (CNY)',
+				name: 'debt',
+				type: 'number',
+				default: 0,
+				description: 'Total existing debt including loans and credit cards',
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
+			},
+			{
+				displayName: 'Overdue Count (24 Months)',
+				name: 'overdue',
+				type: 'number',
+				default: 0,
+				description: 'Number of overdue payments in last 24 months',
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
+			},
+			{
+				displayName: 'Credit History (Months)',
+				name: 'history',
+				type: 'number',
+				default: 0,
+				description: 'Length of credit history in months',
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
+			},
+			{
+				displayName: 'Risk Strategy',
+				name: 'strategy',
+				type: 'options',
+				options: [
+					{
+						name: 'Conservative (Board Level)',
+						value: 'conservative',
+						description: 'High threshold, suitable for board audit',
+					},
+					{
+						name: 'Standard',
+						value: 'standard',
+						description: 'Balanced risk-return',
+					},
+					{
+						name: 'Aggressive',
+						value: 'aggressive',
+						description: 'Lower threshold for growth',
+					},
+				],
+				default: 'standard',
+				displayOptions: {
+					show: {
+						operation: ['score'],
+					},
+				},
+			},
+			{
+				displayName: 'OpenAI API Key',
+				name: 'openaiApiKey',
+				type: 'string',
+				typeOptions: {
+					password: true,
+				},
+				default: '',
+				description: 'For AI explanation generation (optional)',
+				displayOptions: {
+					show: {
+						operation: ['explain'],
+					},
+				},
+			},
+			{
+				displayName: 'Risk Score to Explain',
+				name: 'scoreToExplain',
+				type: 'number',
+				default: 50,
+				description: 'The risk score value to generate explanation for',
+				displayOptions: {
+					show: {
+						operation: ['explain'],
+					},
+				},
+			},
+		],
+	};
+
+	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+		const items = this.getInputData();
+		const returnData: INodeExecutionData[] = [];
+		const operation = this.getNodeParameter('operation', 0) as string;
+
+		for (let i = 0; i < items.length; i++) {
+			try {
 				if (operation === 'score') {
 					const income = this.getNodeParameter('income', i) as number;
 					const debt = this.getNodeParameter('debt', i) as number;
