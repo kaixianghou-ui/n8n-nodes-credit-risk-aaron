@@ -1,20 +1,17 @@
 import { INodeType, INodeTypeDescription, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 
 export class CreditRisk implements INodeType {
-		usableAsTool = true;
-
-		description: INodeTypeDescription = {
+	description: INodeTypeDescription = {
+		displayName: 'Credit Risk AI',
 		name: 'creditRisk',
 		icon: 'file:creditRisk.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'AI-powered credit risk scoring with explainability',
-			defaults: {
-		name: 'Credit Risk AI',
-		usableAsTool: true,
-	},
-	inputs: ['main'],
+		defaults: {
+			name: 'Credit Risk AI',
+		},
 		inputs: ['main'],
 		outputs: ['main'],
 		credentials: [
@@ -23,119 +20,6 @@ export class CreditRisk implements INodeType {
 				required: false,
 			},
 		],
-		properties: [
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'Risk Score',
-						value: 'score',
-						description: 'Calculate credit risk score',
-						action: 'Calculate credit risk score',
-					},
-					{
-						name: 'AI Explanation',
-						value: 'explain',
-						description: 'Generate AI explanation',
-						action: 'Generate AI explanation',
-					},
-				],
-				default: 'score',
-			},
-			{
-				displayName: 'Annual Income (CNY)',
-				name: 'income',
-				type: 'number',
-				default: 500000,
-				description: 'Customer annual income',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
-			},
-			{
-				displayName: 'Total Debt (CNY)',
-				name: 'debt',
-				type: 'number',
-				default: 100000,
-				description: 'Total existing debt',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
-			},
-			{
-				displayName: 'Overdue Count (24M)',
-				name: 'overdue',
-				type: 'number',
-				default: 0,
-				description: 'Overdue payments in last 24 months',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
-			},
-			{
-				displayName: 'Credit History (Months)',
-				name: 'history',
-				type: 'number',
-				default: 36,
-				description: 'Credit history length',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
-			},
-			{
-				displayName: 'Risk Strategy',
-				name: 'strategy',
-				type: 'options',
-				options: [
-					{
-						name: 'Conservative (Board)',
-						value: 'conservative',
-						description: 'High threshold for board audit',
-					},
-					{
-						name: 'Standard',
-						value: 'standard',
-						description: 'Balanced risk-return',
-					},
-					{
-						name: 'Aggressive',
-						value: 'aggressive',
-						description: 'Lower threshold for growth',
-					},
-				],
-				default: 'standard',
-				displayOptions: {
-					show: {
-						operation: ['score'],
-					},
-				},
-			},
-			{
-				displayName: 'Risk Score to Explain',
-				name: 'scoreToExplain',
-				type: 'number',
-				default: 75,
-				description: 'Score value for AI explanation',
-				displayOptions: {
-					show: {
-						operation: ['explain'],
-					},
-				},
-			},
-		],
-		usableAsTool: true,
-	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
